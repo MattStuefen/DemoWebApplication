@@ -11,6 +11,12 @@ html
     body
         include navbar.jade
         block content
-        a(href="#", data-toggle="modal", data-target="#login-modal") Login
+        div
+            a(href="#", data-toggle="modal", data-target="#login-modal") Login
+        div
+            a(href="/logout") Logout
+        div
+            a(href="/unregister") Delete Account
 
     include login.jade
+    include register.jade
