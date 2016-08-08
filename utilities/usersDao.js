@@ -1,12 +1,15 @@
 var sqlite3 = require('sqlite3').verbose();
 var bcrypt = require('bcryptjs');
+var crypto = require("crypto");
 module.exports = {};
 
 const DB_FILE = 'users.db';
 const TABLE_CREATION_SQL = "CREATE TABLE if not exists user_info (" +
     "id INTEGER PRIMARY KEY NOT NULL," +
     "username TEXT NOT NULL UNIQUE," +
-    "password TEXT NOT NULL)";
+    "password TEXT NOT NULL," +
+    "email TEXT UNIQUE," +
+    "reset_token TEXT UNIQUE)";
 
 module.exports.initializeTable = function () {
     createDbConnection(function (db) {
@@ -14,13 +17,13 @@ module.exports.initializeTable = function () {
     });
 };
 
-module.exports.addUser = function (username, password, callback) {
+module.exports.addUser = function (username, password, emailAddress, callback) {
     encryptPassword(password, function (err, encryptedPassword) {
         createDbConnection(function (db) {
-            db.run("INSERT INTO user_info VALUES (NULL, ?, ?)", [username, encryptedPassword]);
-            db.all("SELECT * FROM user_info WHERE username=?", username,
-                function (err, rows) {
-                    callback(err, (rows.length != 0) ? rows[0] : false);
+            db.run("INSERT INTO user_info VALUES (NULL, ?, ?, ?, NULL)", [username, encryptedPassword, emailAddress],
+                function (err) {
+                    if (err) return callback(err);
+                    getUserByField("username", username, callback);
                 });
         });
     });
@@ -44,13 +47,29 @@ module.exports.verifyUser = function (username, password, callback) {
     });
 };
 
+module.exports.changePassword = function (update_data, callback){
+    if((update_data['token'] == 'undefined') && !update_data['user']) return callback("Error: User not specified.");
+    var identifyingField = (update_data['token'] != 'undefined') ? 'reset_token' : 'username';
+    var identifyingValue = (update_data['token'] != 'undefined') ? update_data['token'] : update_data['user'].username;
+
+    encryptPassword(update_data['password'], function (err, encryptedPassword) {
+        if (err) return callback(err);
+        updateUserInfo('password', encryptedPassword, identifyingField, identifyingValue, callback);
+    });
+};
+
+module.exports.generateResetToken = function (emailAddress, callback) {
+    crypto.randomBytes(25, function (err, tokenBuffer) {
+        var token = tokenBuffer.toString('hex');
+
+        updateUserInfo('reset_token', token, 'email', emailAddress, function (err) {
+            return callback(err, token);
+        });
+    });
+};
+
 module.exports.getUserById = function (id, callback) {
-    createDbConnection(function (db) {
-        db.all("SELECT * FROM user_info WHERE id=?", [id],
-            function (err, rows) {
-                callback(err, (rows.length != 0) ? rows[0] : false);
-            });
-    })
+    getUserByField("id", id, callback);
 };
 
 module.exports.getUserList = function (callback) {
@@ -59,10 +78,31 @@ module.exports.getUserList = function (callback) {
     });
 };
 
+function updateUserInfo(updateField, updateValue, identifyingField, identifyingValue, callback) {
+    getUserByField(identifyingField, identifyingValue, function (err, user) {
+        if (err) return callback(err);
+        if (!user) return callback("ERROR: Specified user does not exist.");
+
+        createDbConnection(function (db) {
+            db.run("UPDATE user_info SET " + updateField + "=? WHERE " + identifyingField + "=?", [updateValue, identifyingValue], callback);
+        });
+    });
+}
+
+function getUserByField(field, value, callback) {
+    createDbConnection(function (db) {
+        db.all("SELECT * FROM user_info WHERE " + field + "=?", [value],
+            function (err, rows) {
+                if (err) return callback(err);
+                return callback(err, (rows.length != 0) ? rows[0] : false);
+            });
+    });
+}
+
 function createDbConnection(callback) {
     var db = new sqlite3.Database(DB_FILE);
     db.serialize(function () {
-        callback(db);
+        return callback(db);
     });
     db.close();
 }

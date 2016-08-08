@@ -6,7 +6,7 @@ div.modal.fade#login-modal(tabindex="-1", role="dialog", aria-hidden="true", sty
                     span(aria-hidden="true") &times;
                 h4 Login
             div.modal-body
-                form(action="/login", method="post")
+                form#login-form
                     input.input-sm.center-block(type="text", name="username", placeholder="User Name")
                     input.input-sm.center-block(type="password", name="password", placeholder="Password")
                     input.input-sm.center-block(type="submit", name="login")
@@ -14,4 +14,4 @@ div.modal.fade#login-modal(tabindex="-1", role="dialog", aria-hidden="true", sty
                 div
                     a(href="#", data-dismiss="modal", data-toggle="modal", data-target="#register-modal") Register
                     | &nbsp-&nbsp
-                    a(href="#") Forgot Password
+                    a(href="#", data-dismiss="modal", data-toggle="modal", data-target="#forgot-password-modal") Forgot Password

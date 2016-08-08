@@ -2,6 +2,8 @@ var express = require('express');
 var router = express.Router();
 var passport = require('passport');
 var LocalStrategy = require('passport-local');
+
+var emailer = require('../utilities/emailer');
 var usersDao = require('../utilities/usersDao');
 
 passport.use('local', new LocalStrategy(
@@ -23,11 +25,10 @@ passport.deserializeUser(function (id, done) {
 });
 
 router.post('/login',
-    passport.authenticate('local', {
-        successRedirect: '/',
-        failureRedirect: '/',
-        failureFlash: false
-    })
+    passport.authenticate('local'),
+    function (req, res) {
+        res.redirect('/');
+    }
 );
 
 router.get('/logout', function (req, res) {
@@ -36,7 +37,7 @@ router.get('/logout', function (req, res) {
 });
 
 router.post('/register', function (req, res) {
-    usersDao.addUser(req.body.username, req.body.password, function (err, user) {
+    usersDao.addUser(req.body.username, req.body.password, req.body.emailAddress, function (err, user) {
         if (err) {
             res.send("Unable to create user " + req.body.username + ".  " + err);
         } else {
@@ -60,8 +61,32 @@ router.get('/unregister', function (req, res) {
         if (err) {
             res.send("An error has occurred: " + err);
         } else {
-            res.redirect('/')
+            res.redirect('/');
         }
+    });
+});
+
+router.post('/forgotPassword', function (req, res) {
+    var emailAddress = req.param('emailAddress');
+    usersDao.generateResetToken(emailAddress, function (err, token) {
+        if (err) return res.send(err);
+        
+        emailer.sendPasswordReset(emailAddress, token, function (err) {
+            if (err) res.send(err);
+            else res.send();
+        });
+    });
+});
+
+router.get('/changePassword', function (req, res) {
+    res.render('changePassword', {token: req.param('token')});
+});
+
+router.post('/changePassword', function (req, res) {
+    var token = req.param('token');
+    usersDao.changePassword({'token': token, 'user': req.user, 'password': req.body.password}, function(err, user){
+        if (err) return res.send(err);
+        res.send(user)
     });
 });
 
