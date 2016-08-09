@@ -1,0 +1,51 @@
+include genericModal
++genericModal({
+    header: 'Login',
+    name: 'login',
+    url: '/login',
+    fields: [
+        ['text', 'username', 'User Name'],
+        ['password', 'password', 'Password']],
+    onSuccess: function (content) {
+        window.location.reload();
+        return 'Login Successful';
+    },
+    onFailure: function (content) {
+        return 'Login Failed';
+    },
+    footer: '<div>' +
+    '<a href="#" data-dismiss="modal" data-toggle="modal" data-target="#register-modal">Register</a>' +
+    '&nbsp&nbsp|&nbsp&nbsp' +
+    '<a href="#", data-dismiss="modal", data-toggle="modal", data-target="#forgot-password-modal">Forgot Password</a>' +
+    '</div>'
+})
+
++genericModal({
+    header: 'Register',
+    name: 'register',
+    url: '/register',
+    fields: [
+        ['text', 'username', 'User Name'],
+        ['password', 'password', 'Enter password'],
+        ['password', 'passwordTwo', 'Repeat password'],
+        ['text', 'emailAddress', 'Email Address']],
+    onSuccess: function (content) {
+        return 'Registration Successful';
+    },
+    onFailure: function (content) {
+        return 'Registration Failed';
+    }
+})
+
++genericModal({
+    header: 'Forgot Password',
+    name: 'forgot-password',
+    url: '/forgotPassword',
+    fields: [['text', 'emailAddress', 'Email Address']],
+    onSuccess: function (content) {
+        return 'Password reset email sent - make sure to check your spam folder!';
+    },
+    onFailure: function (content) {
+        return 'Failed to send email.';
+    }
+})

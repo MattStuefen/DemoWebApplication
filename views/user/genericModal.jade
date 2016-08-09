@@ -1,0 +1,35 @@
+mixin genericModal(params)
+    div.modal.fade(id=params.name + '-modal', tabindex="-1", role="dialog", aria-hidden="true", style="display: none;")
+        div.modal-dialog
+            div.modal-content
+                div.modal-header
+                    button.close(type="button" data-dismiss="modal" aria-label="Close")
+                        span(aria-hidden="true") &times;
+                    h4 #{params.header}
+                div.modal-body
+                    text(id=params.name + '-success', style="color:green")
+                    text(id=params.name + '-failure', style="color:red")
+                    form(id=params.name + '-form')
+                        each field in params.fields
+                            input.input-sm.center-block(type=field[0], name=field[1], placeholder=field[2])
+                        input.input-sm.center-block(type="submit", name="login")
+                if params.footer
+                    div.modal-footer!= params.footer
+
+    script.
+        $('#' + '#{params.name}' + '-form').submit(function (e) {
+            e.preventDefault();
+            $.ajax({
+                url: '#{params.url}',
+                type: 'post',
+                data: $('#' + '#{params.name}' + '-form').serialize(),
+                success: function (content) {
+                    $('#' + '#{params.name}' + '-success').text(#{params.onSuccess}(content))
+                    $('#' + '#{params.name}' + '-failure').text('')
+                },
+                error: function (content) {
+                    $('#' + '#{params.name}' + '-success').text('')
+                    $('#' + '#{params.name}' + '-failure').text(#{params.onFailure}(content))
+                }
+            });
+        });

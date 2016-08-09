@@ -6,7 +6,6 @@ html
         link(rel='stylesheet', href='/stylesheets/tpip/bootstrap.min.css')
         script(src="/javascripts/tpip/jquery-2.2.4.min.js")
         script(src="/javascripts/tpip/bootstrap.min.js")
-        script(src="/javascripts/login.js")
         block importedScripts
 
     body
@@ -19,6 +18,4 @@ html
         div
             a(href="/unregister") Delete Account
 
-    include user/login
-    include user/register
-    include user/forgotPassword
+    include user/modals
