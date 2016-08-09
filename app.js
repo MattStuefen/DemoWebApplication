@@ -9,7 +9,6 @@ var passport = require('passport');
 
 var routes = require('./routes/index');
 var users = require('./routes/users');
-var passportRoutes = require('./routes/passport');
 
 var usersDao = require('./utilities/usersDao');
 usersDao.initializeTable();
@@ -32,8 +31,7 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 app.use('/', routes);
-app.use('/users', users);
-app.use('/', passportRoutes);
+app.use('/', users);
 
 app.locals.pretty = true;
 
