@@ -1,0 +1,26 @@
+include genericForm
+extends ../layout
+
+block content
+    if user || token
+        div.container-fluid
+            div.row.col-md-12: h4= 'Account Preferences:'
+            div.row.col-md-3
+                table.pad-top(frame='box'): tr: th: div.container-fluid
+                    div.row.col-md-12: h4= 'Change password:'
+                    div.row.col-md-12.pad-top.pad-bottom
+                        +genericForm({
+                            name: 'changePassword',
+                            url: '/changePassword?token=' + token,
+                            fields: [
+                                ['password', 'password', 'Enter password'],
+                                ['password', 'passwordTwo', 'Repeat password']],
+                            onSuccess: function (content) {
+                                return 'Password changed.';
+                            },
+                            onFailure: function (content) {
+                                return 'Password change failed: ' + content.responseText;
+                            }
+                        })
+            if user
+                div.row.col-md-12.pad-top: a(href="#", data-toggle="modal", data-target="#delete-account-modal") Delete Account

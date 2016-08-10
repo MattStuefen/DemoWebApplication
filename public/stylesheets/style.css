@@ -1,8 +1,11 @@
-body {
-  padding: 50px;
-  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+.pad-top {
+  margin-top: 20px;
 }
 
-a {
-  color: #00B7FF;
+.pad-bottom {
+   margin-bottom: 20px;
+}
+
+.stretch {
+  width: 100%;
 }

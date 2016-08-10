@@ -11,7 +11,7 @@ include genericModal
         return 'Login Successful';
     },
     onFailure: function (content) {
-        return 'Login Failed';
+        return 'Login Failed: ' + content.responseText;
     },
     footer: '<div>' +
     '<a href="#" data-dismiss="modal" data-toggle="modal" data-target="#register-modal">Register</a>' +
@@ -30,10 +30,11 @@ include genericModal
         ['password', 'passwordTwo', 'Repeat password'],
         ['text', 'emailAddress', 'Email Address']],
     onSuccess: function (content) {
+        window.location.reload();
         return 'Registration Successful';
     },
     onFailure: function (content) {
-        return 'Registration Failed';
+        return 'Registration Failed: ' + content.responseText;
     }
 })
 
@@ -46,6 +47,20 @@ include genericModal
         return 'Password reset email sent - make sure to check your spam folder!';
     },
     onFailure: function (content) {
-        return 'Failed to send email.';
+        return content.responseText;
+    }
+})
+
++genericModal({
+    header: 'Are you sure?',
+    name: 'delete-account',
+    url: '/unregister',
+    fields: [],
+    onSuccess: function (content) {
+        window.location.href = '/';
+        return 'Account Deleted';
+    },
+    onFailure: function (content) {
+        return 'Account Deletion Failed: ' + content.responseText;
     }
 })

@@ -8,6 +8,6 @@ module.exports.sendPasswordReset = function (emailAddress, token, callback) {
         from: "Robot <robot@no-reply>", // sender address
         to: emailAddress, // list of receivers
         subject: "Password Reset", // Subject line
-        text: "http://localhost:3000/changePassword?token=" + token // plaintext body
+        text: "http://localhost:3000/account?token=" + token // plaintext body
     }, callback);
 };

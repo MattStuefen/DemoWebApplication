@@ -1,5 +1,10 @@
 extends layout
 
 block content
-    h1= 'Hi'
-    p Welcome #{name}
+    div.container-fluid
+        div.row.col-md-12: h1= 'Hi'
+        div.row.col-md-12
+            if user
+                p Welcome #{user.username}!
+            else
+                p Welcome Stranger!

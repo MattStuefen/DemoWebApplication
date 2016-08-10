@@ -17,12 +17,22 @@ module.exports.initializeTable = function () {
     });
 };
 
+function getFailureString(err) {
+    switch(err.message){
+        case "SQLITE_CONSTRAINT: UNIQUE constraint failed: user_info.username":
+            return "Username already exists.";
+        case "SQLITE_CONSTRAINT: UNIQUE constraint failed: user_info.email":
+            return "Email address already linked to an account.";
+        default:
+            return err;
+    }
+}
 module.exports.addUser = function (username, password, emailAddress, callback) {
     encryptPassword(password, function (err, encryptedPassword) {
         createDbConnection(function (db) {
             db.run("INSERT INTO user_info VALUES (NULL, ?, ?, ?, NULL)", [username, encryptedPassword, emailAddress],
                 function (err) {
-                    if (err) return callback(err);
+                    if (err) return callback(getFailureString(err));
                     getUserByField("username", username, callback);
                 });
         });

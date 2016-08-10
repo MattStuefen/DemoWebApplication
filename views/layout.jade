@@ -2,20 +2,14 @@ doctype html
 html
     head
         title= title
-        //link(rel='stylesheet', href='/stylesheets/style.css')
-        link(rel='stylesheet', href='/stylesheets/tpip/bootstrap.min.css')
-        script(src="/javascripts/tpip/jquery-2.2.4.min.js")
-        script(src="/javascripts/tpip/bootstrap.min.js")
+        link(rel='stylesheet', href='/stylesheets/style.css')
+        link(rel='stylesheet', href='/tpip/css/bootstrap.min.css')
+        script(src="/tpip/js/jquery-2.2.4.min.js")
+        script(src="/tpip/js/bootstrap.min.js")
         block importedScripts
 
     body
         include navbar.jade
         block content
-        div
-            a(href="#", data-toggle="modal", data-target="#login-modal") Login
-        div
-            a(href="/logout") Logout
-        div
-            a(href="/unregister") Delete Account
 
     include user/modals

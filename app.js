@@ -29,6 +29,10 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(session({ secret: 'Sf;j4<g@3U{Zt9"P' }));
 app.use(passport.initialize());
 app.use(passport.session());
+app.use(function(req,res,next){
+  res.locals.user = req.user;
+  next();
+});
 
 app.use('/', routes);
 app.use('/', users);

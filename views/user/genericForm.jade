@@ -1,0 +1,25 @@
+mixin genericForm(params)
+    text(id=params.name + '-success', style="color:green")
+    text(id=params.name + '-failure', style="color:red")
+    form(id=params.name + '-form')
+        each field in params.fields
+            input.input-sm.center-block(type=field[0], name=field[1], placeholder=field[2])
+        input.input-sm.center-block.pad-top(type="submit", name="submit")
+
+    script.
+        $('#' + '#{params.name}' + '-form').submit(function (e) {
+            e.preventDefault();
+            $.ajax({
+                url: '#{params.url}',
+                type: 'post',
+                data: $('#' + '#{params.name}' + '-form').serialize(),
+                success: function (content) {
+                    $('#' + '#{params.name}' + '-success').text(#{params.onSuccess}(content))
+                    $('#' + '#{params.name}' + '-failure').text('')
+                },
+                error: function (content) {
+                    $('#' + '#{params.name}' + '-success').text('')
+                    $('#' + '#{params.name}' + '-failure').text(#{params.onFailure}(content))
+                }
+            });
+        });

@@ -6,14 +6,20 @@ nav.navbar.navbar-default
                 span.icon-bar
                 span.icon-bar
                 span.icon-bar
-            a.navbar-brand(href="#") Demo Application
+            a.navbar-brand(href="/") Demo Application
         div.collapse.navbar-collapse#bs-example-navbar-collapse-1
-            ul.nav.navbar-nav
-                li.active
-                    a(href="#") Link
-                li.dropdown
-                    a.dropdown-toggle(href="#", data-toggle="dropdown", role="button", aria-haspopup="true", aria-expanded="false") Dropdown
-                        span.caret
-                    ul.dropdown-menu
-                        li: a(href="#") Action1
-                        li: a(href="#") Action2
+            if user
+                ul.nav.navbar-nav.navbar-left
+                    li.active
+                        a(href="/users") Users
+            ul.nav.navbar-nav.navbar-right
+                if user
+                    li.dropdown
+                        a.dropdown-toggle(href="#", data-toggle="dropdown", role="button", aria-haspopup="true", aria-expanded="false") Account
+                            span.caret
+                        ul.dropdown-menu
+                            li: a(href="/account") Preferences
+                            li: a(href="/logout"): span.glyphicon.glyphicon-log-out &nbsp;Logout
+                else
+                    li: a(href="#", data-toggle="modal", data-target="#login-modal")
+                        span.glyphicon.glyphicon-log-in &nbsp;Login
