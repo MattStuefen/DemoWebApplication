@@ -1,25 +1,31 @@
 mixin genericForm(params)
     text(id=params.name + '-success', style="color:green")
     text(id=params.name + '-failure', style="color:red")
-    form(id=params.name + '-form')
+    form.form(id=params.name + '-form')
         each field in params.fields
-            input.input-sm.center-block(type=field[0], name=field[1], placeholder=field[2])
-        input.input-sm.center-block.pad-top(type="submit", name="submit")
+            div.form-group.has-feedback(id=params.name + '-' + field.name)
+                input.form-control.input-sm&attributes(field)
+                span.glyphicon.form-control-feedback(data-toggle='tooltip', style="pointer-events: auto;")
 
     script.
         $('#' + '#{params.name}' + '-form').submit(function (e) {
             e.preventDefault();
+            if (!formValidator.validate('#{params.name}')){
+                $('#' + '#{params.name}' + '-failure').text('Error: Invalid inputs detected.')
+                return;
+            }
             $.ajax({
                 url: '#{params.url}',
                 type: 'post',
                 data: $('#' + '#{params.name}' + '-form').serialize(),
                 success: function (content) {
-                    $('#' + '#{params.name}' + '-success').text(#{params.onSuccess}(content))
-                    $('#' + '#{params.name}' + '-failure').text('')
+                    $('#' + '#{params.name}' + '-success').text(#{params.onSuccess}(content));
+                    $('#' + '#{params.name}' + '-failure').text('');
                 },
                 error: function (content) {
-                    $('#' + '#{params.name}' + '-success').text('')
-                    $('#' + '#{params.name}' + '-failure').text(#{params.onFailure}(content))
+                    $('#' + '#{params.name}' + '-success').text('');
+                    $('#' + '#{params.name}' + '-failure').text(#{params.onFailure}(content));
                 }
             });
-        });
+        })
+

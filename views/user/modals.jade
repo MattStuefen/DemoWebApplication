@@ -4,8 +4,9 @@ include genericModal
     name: 'login',
     url: '/login',
     fields: [
-        ['text', 'username', 'User Name'],
-        ['password', 'password', 'Password']],
+        {type: 'text', name: 'username', placeholder: 'User Name'},
+        {type: 'password', name: 'password', placeholder: 'Password'},
+        {type: 'submit', name: 'submit', value: 'Submit', class: 'btn btn-primary pad-top'}],
     onSuccess: function (content) {
         window.location.reload();
         return 'Login Successful';
@@ -25,10 +26,17 @@ include genericModal
     name: 'register',
     url: '/register',
     fields: [
-        ['text', 'username', 'User Name'],
-        ['password', 'password', 'Enter password'],
-        ['password', 'passwordTwo', 'Repeat password'],
-        ['text', 'emailAddress', 'Email Address']],
+        {type: 'text', name: 'username', placeholder: 'User Name', onkeyup: "formValidator.validate('register')"},
+        {type: 'password', name: 'password', placeholder: 'Enter password', onkeyup: "formValidator.validate('register')"},
+        {type: 'password', name: 'confirm', placeholder: 'Repeat password', onkeyup: "formValidator.validate('register')"},
+        {type: 'text', name: 'emailAddress', placeholder: 'Email Address', onkeyup: "formValidator.validate('register')"},
+        {
+            type: 'submit',
+            name: 'submit',
+            value: 'Submit',
+            class: 'btn btn-primary pad-top',
+            cursor: 'default'
+        }],
     onSuccess: function (content) {
         window.location.reload();
         return 'Registration Successful';
@@ -42,7 +50,8 @@ include genericModal
     header: 'Forgot Password',
     name: 'forgot-password',
     url: '/forgotPassword',
-    fields: [['text', 'emailAddress', 'Email Address']],
+    fields: [{type: 'text', name: 'emailAddress', placeholder: 'Email Address', class: 'center-block'},
+        {type: 'submit', name: 'submit', value: 'Submit', class: 'btn btn-primary center-block pad-top'}],
     onSuccess: function (content) {
         return 'Password reset email sent - make sure to check your spam folder!';
     },
@@ -55,7 +64,7 @@ include genericModal
     header: 'Are you sure?',
     name: 'delete-account',
     url: '/unregister',
-    fields: [],
+    fields: [{type: 'submit', name: 'submit', value: 'Really?', class: 'center-block'}],
     onSuccess: function (content) {
         window.location.href = '/';
         return 'Account Deleted';

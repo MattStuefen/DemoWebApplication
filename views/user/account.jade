@@ -1,26 +1,31 @@
 include genericForm
 extends ../layout
 
+mixin passwordChangeBox()
+    div.row.col-md-3
+        table.pad-top(frame='box'): tr: th: div.container-fluid
+            div.row.col-md-12: h4= 'Change password:'
+            div.row.col-md-12.pad-top.pad-bottom
+                +genericForm({
+                    name: 'change-password',
+                    url: '/changePassword?token=' + token,
+                    fields: [
+                        {type: 'password', name: 'password', placeholder: 'Enter password', onkeyup: "formValidator.validate('change-password')"},
+                        {type: 'password', name: 'confirm', placeholder: 'Repeat password', onkeyup: "formValidator.validate('change-password')"},
+                        {type: 'submit', name: 'submit', class: 'btn btn-primary pad-top', cursor: 'default'}],
+                    onSuccess: function (content) {
+                        return 'Password changed.';
+                    },
+                    onFailure: function (content) {
+                        return 'Password change failed: ' + content.responseText;
+                    }
+                })
+
 block content
-    if user || token
-        div.container-fluid
+    div.container-fluid
+        if token
+            +passwordChangeBox()
+        else if user
             div.row.col-md-12: h4= 'Account Preferences:'
-            div.row.col-md-3
-                table.pad-top(frame='box'): tr: th: div.container-fluid
-                    div.row.col-md-12: h4= 'Change password:'
-                    div.row.col-md-12.pad-top.pad-bottom
-                        +genericForm({
-                            name: 'changePassword',
-                            url: '/changePassword?token=' + token,
-                            fields: [
-                                ['password', 'password', 'Enter password'],
-                                ['password', 'passwordTwo', 'Repeat password']],
-                            onSuccess: function (content) {
-                                return 'Password changed.';
-                            },
-                            onFailure: function (content) {
-                                return 'Password change failed: ' + content.responseText;
-                            }
-                        })
-            if user
-                div.row.col-md-12.pad-top: a(href="#", data-toggle="modal", data-target="#delete-account-modal") Delete Account
+            +passwordChangeBox()
+            div.row.col-md-12.pad-top: a(href="#", data-toggle="modal", data-target="#delete-account-modal") Delete Account
