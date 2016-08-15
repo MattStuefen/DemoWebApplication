@@ -37,8 +37,12 @@ include genericModal
             class: 'btn btn-primary btn-submit pad-top',
             disabled: true
         }],
-    onKeyUp: "formValidator.validate('register')",
-    onChange: "formValidator.validate('register')",
+    onKeyUp: function () {
+        formValidator.validate('register')
+    },
+    onChange: function () {
+        formValidator.validate('register')
+    },
     onSuccess: function (content) {
         window.location.reload();
         return 'Registration Successful';

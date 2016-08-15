@@ -13,8 +13,12 @@ mixin passwordChangeBox()
                         {type: 'password', name: 'password', placeholder: 'Enter password'},
                         {type: 'password', name: 'confirm', placeholder: 'Repeat password'},
                         {type: 'submit', name: 'submit', class: 'btn btn-primary pad-top btn-submit', disabled: true}],
-                    onKeyUp: "formValidator.validate('register')",
-                    onChange: "formValidator.validate('register')",
+                    onKeyUp: function () {
+                        formValidator.validate('change-password')
+                    },
+                    onChange: function () {
+                        formValidator.validate('change-password')
+                    },
                     onSuccess: function (content) {
                         return 'Password changed.';
                     },
