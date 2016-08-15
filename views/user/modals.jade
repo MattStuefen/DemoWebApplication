@@ -26,17 +26,19 @@ include genericModal
     name: 'register',
     url: '/register',
     fields: [
-        {type: 'text', name: 'username', placeholder: 'User Name', onkeyup: "formValidator.validate('register')"},
-        {type: 'password', name: 'password', placeholder: 'Enter password', onkeyup: "formValidator.validate('register')"},
-        {type: 'password', name: 'confirm', placeholder: 'Repeat password', onkeyup: "formValidator.validate('register')"},
-        {type: 'text', name: 'emailAddress', placeholder: 'Email Address', onkeyup: "formValidator.validate('register')"},
+        {type: 'text', name: 'username', placeholder: 'User Name'},
+        {type: 'password', name: 'password', placeholder: 'Enter password'},
+        {type: 'password', name: 'confirm', placeholder: 'Repeat password'},
+        {type: 'text', name: 'emailAddress', placeholder: 'Email Address'},
         {
             type: 'submit',
             name: 'submit',
             value: 'Submit',
-            class: 'btn btn-primary pad-top',
-            cursor: 'default'
+            class: 'btn btn-primary btn-submit pad-top',
+            disabled: true
         }],
+    onKeyUp: "formValidator.validate('register')",
+    onChange: "formValidator.validate('register')",
     onSuccess: function (content) {
         window.location.reload();
         return 'Registration Successful';
@@ -51,7 +53,7 @@ include genericModal
     name: 'forgot-password',
     url: '/forgotPassword',
     fields: [{type: 'text', name: 'emailAddress', placeholder: 'Email Address', class: 'center-block'},
-        {type: 'submit', name: 'submit', value: 'Submit', class: 'btn btn-primary center-block pad-top'}],
+        {type: 'submit', name: 'submit', value: 'Submit', class: 'btn btn-primary pad-top'}],
     onSuccess: function (content) {
         return 'Password reset email sent - make sure to check your spam folder!';
     },
@@ -64,7 +66,7 @@ include genericModal
     header: 'Are you sure?',
     name: 'delete-account',
     url: '/unregister',
-    fields: [{type: 'submit', name: 'submit', value: 'Really?', class: 'center-block'}],
+    fields: [{type: 'submit', name: 'submit', value: 'Really?', class: 'btn btn-primary'}],
     onSuccess: function (content) {
         window.location.href = '/';
         return 'Account Deleted';

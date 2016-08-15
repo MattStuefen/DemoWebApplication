@@ -10,9 +10,11 @@ mixin passwordChangeBox()
                     name: 'change-password',
                     url: '/changePassword?token=' + token,
                     fields: [
-                        {type: 'password', name: 'password', placeholder: 'Enter password', onkeyup: "formValidator.validate('change-password')"},
-                        {type: 'password', name: 'confirm', placeholder: 'Repeat password', onkeyup: "formValidator.validate('change-password')"},
-                        {type: 'submit', name: 'submit', class: 'btn btn-primary pad-top', cursor: 'default'}],
+                        {type: 'password', name: 'password', placeholder: 'Enter password'},
+                        {type: 'password', name: 'confirm', placeholder: 'Repeat password'},
+                        {type: 'submit', name: 'submit', class: 'btn btn-primary pad-top btn-submit', disabled: true}],
+                    onKeyUp: "formValidator.validate('register')",
+                    onChange: "formValidator.validate('register')",
                     onSuccess: function (content) {
                         return 'Password changed.';
                     },

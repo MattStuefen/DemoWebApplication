@@ -9,6 +9,7 @@ mixin genericModal(params)
                         span(aria-hidden="true") &times;
                     h4 #{params.header}
                 div.modal-body
-                    +genericForm(params)
+                    div.row
+                        div.col-md-offset-3.col-md-6: +genericForm(params)
                 if params.footer
                     div.modal-footer!= params.footer

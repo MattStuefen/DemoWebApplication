@@ -69,7 +69,7 @@ var formValidator = {
     },
     validate: function (form_name) {
         var fields = this.getFields(form_name);
-        return Object.keys(fields).reduce(function (valid, field) {
+        fields.submit.controlElement.disabled = !Object.keys(fields).reduce(function (valid, field) {
             return fields[field].validate() && valid;
         }, true);
     },

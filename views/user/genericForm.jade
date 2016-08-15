@@ -3,17 +3,13 @@ mixin genericForm(params)
     text(id=params.name + '-failure', style="color:red")
     form.form(id=params.name + '-form')
         each field in params.fields
-            div.form-group.has-feedback(id=params.name + '-' + field.name)
-                input.form-control.input-sm&attributes(field)
+            div.form-group.has-feedback(id=params.name + '-' + field.name, style="margin-bottom: 5px;")
+                input.form-control.input-sm&attributes(field)(onkeyup= params.onKeyUp, onchange= params.onChange)
                 span.glyphicon.form-control-feedback(data-toggle='tooltip', style="pointer-events: auto;")
 
     script.
         $('#' + '#{params.name}' + '-form').submit(function (e) {
             e.preventDefault();
-            if (!formValidator.validate('#{params.name}')){
-                $('#' + '#{params.name}' + '-failure').text('Error: Invalid inputs detected.')
-                return;
-            }
             $.ajax({
                 url: '#{params.url}',
                 type: 'post',
