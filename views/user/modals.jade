@@ -56,7 +56,7 @@ include genericModal
     header: 'Forgot Password',
     name: 'forgot-password',
     url: '/forgotPassword',
-    fields: [{type: 'text', name: 'emailAddress', placeholder: 'Email Address', class: 'center-block'},
+    fields: [{type: 'text', name: 'emailAddress', placeholder: 'Email Address'},
         {type: 'submit', name: 'submit', value: 'Submit', class: 'btn btn-primary pad-top'}],
     onSuccess: function (content) {
         return 'Password reset email sent - make sure to check your spam folder!';

@@ -1,10 +1,51 @@
 extends layout
 
+block importedScripts
+    script(src="http://maps.googleapis.com/maps/api/js?key=#{googleApiKey}")
+
 block content
-    div.container-fluid
-        div.row.col-md-12: h1= 'Hi'
-        div.row.col-md-12
-            if user
-                p Welcome #{user.username}!
-            else
-                p Welcome Stranger!
+    div.panel-group.container-fluid
+        div.panel.panel-warning
+            div.panel-body
+                div.row
+                    - var username = (user) ? user.username : 'Stranger'
+                    h4.text-center= 'Welcome ' + username
+    div.panel-group.container-fluid
+        div.panel.panel-info
+            div.panel-heading: | User Info
+            div.panel-body
+                div.col-md-6(id="ip-info")
+                div.col-md-6.well(id="googleMap" style="height: 40vh;")
+
+    script.
+        $(document).ready(function () {
+            jQuery.get("http://ip-api.com/json", function(ipData){
+                const output = $("#ip-info")
+
+                var outList = []
+                outList.push(['IP Address', ipData['query']])
+                outList.push(['ISP', ipData['isp']])
+                outList.push(['City', ipData['city']])
+                outList.push(['State (Region)', ipData['regionName']])
+                outList.push(['Country', ipData['country']])
+                outList.push(['Zip Code', ipData['zip']])
+                outList.push(['Time Zone', ipData['timezone']])
+
+                var outStr = '<table>'
+                for (var i = 0; i < outList.length; i++) {
+                    outStr += '<tr><td style="font-weight: bold; float: right;">' + outList[i][0] + '</td>'
+                    outStr += '<td>&nbsp:&nbsp</td>'
+                    outStr += '<td>' + outList[i][1] + '</td></tr>'
+                }
+                outStr += '</table>'
+
+                output.append(outStr)
+
+                var mapProp = {
+                    center: new google.maps.LatLng(ipData['lat'], ipData['lon']),
+                    zoom: 10,
+                    mapTypeId: google.maps.MapTypeId.ROADMAP
+                };
+                var map = new google.maps.Map(document.getElementById("googleMap"), mapProp);
+            });
+        })
