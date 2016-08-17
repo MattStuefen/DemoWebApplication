@@ -1,0 +1,67 @@
+include genericModal
+extends ../layout
+
+block content
+    div.panel-group.container-fluid
+        div.panel.panel-warning
+            div.panel-body
+                div.row
+                    h4.text-center= 'Users'
+    div.panel-group.container-fluid
+        div.panel.panel-info
+            div.panel-heading: | Users List
+            div.panel-body
+                div.table-responsive: table.table.table-striped
+                    thead: tr
+                        th Username
+                        th Email
+                        th
+                        th
+                    tbody
+                        if user
+                            tr.success
+                                td #{user.username}
+                                td #{user.email}
+                                td
+                                td
+                        for userInfo in usersList
+                            if !user || user.username != userInfo.username
+                                tr
+                                    td #{userInfo.username}
+                                    td #{userInfo.email}
+                                    td: a(href="#", data-toggle="modal", data-target="#edit-account-modal" onclick='populateAccountInfo(#{JSON.stringify(userInfo)})') Edit
+                                    td: a(href="#", data-toggle="modal", data-target="#delete-account-modal" onclick='setDeleteId("#{userInfo.id}")') Delete
+
+    +genericModal({
+        header: 'Edit Account',
+        name: 'edit-account',
+        url: '/editAccount',
+        fields: [
+            {type: 'hidden', name: 'id', value: ''},
+            {type: 'text', name: 'username', placeholder: 'User Name'},
+            {type: 'text', name: 'emailAddress', placeholder: 'Email Address'},
+            {type: 'submit', name: 'submit', value: 'Submit', class: 'btn btn-primary btn-submit pad-top'}
+        ],
+        onKeyUp: function () {
+            formValidator.validate('edit-account')
+        },
+        onChange: function () {
+            formValidator.validate('edit-account')
+        },
+        onSuccess: function (content) {
+            window.location.reload();
+        },
+        onFailure: function (content) {
+            return 'Error: ' + content.responseText;
+        }
+    })
+
+    script.
+        function populateAccountInfo(userInfo){
+            $('#edit-account-id').children('.form-control').attr('value', userInfo.id);
+            $('#edit-account-username').children('.form-control').attr('value', userInfo.username);
+            $('#edit-account-emailAddress').children('.form-control').attr('value', userInfo.email);
+        }
+        function setDeleteId(id) {
+            $('#delete-account-id').children('.form-control').attr('value', id);
+        }

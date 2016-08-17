@@ -51,7 +51,13 @@ module.exports.verifyUser = function (username, password, callback) {
             function (err, rows) {
                 if (err || (rows.length == 0)) return callback(err, false);
                 comparePassword(password, rows[0].password, function (err, isMatch) {
-                    return callback(err, isMatch ? rows[0] : false);
+                    if(isMatch){
+                        clearResetToken(username, function(resetErr){
+                            return callback(err, rows[0]);
+                        });
+                    } else {
+                        return callback(err, false);
+                    }
                 });
             });
     });
@@ -66,6 +72,13 @@ module.exports.changePassword = function (update_data, callback){
         if (err) return callback(err);
         updateUserInfo('password', encryptedPassword, identifyingField, identifyingValue, callback);
     });
+};
+
+module.exports.editUser = function (userInfo, callback) {
+    updateUserInfo('username', userInfo.username, 'id', userInfo.id, function(err){
+        if (err) return callback(err);
+        updateUserInfo('email', userInfo.emailAddress, 'id', userInfo.id, callback)
+    })
 };
 
 module.exports.generateResetToken = function (emailAddress, callback) {
@@ -129,4 +142,10 @@ function encryptPassword(password, callback) {
 
 function comparePassword(password, encryptedPassword, callback) {
     bcrypt.compare(password, encryptedPassword, callback);
+}
+
+function clearResetToken(username, callback) {
+    createDbConnection(function (db) {
+        db.run("UPDATE user_info SET reset_token = NULL WHERE username=?", [username], callback);
+    });
 }

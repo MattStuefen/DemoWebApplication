@@ -70,9 +70,16 @@ include genericModal
     header: 'Are you sure?',
     name: 'delete-account',
     url: '/unregister',
-    fields: [{type: 'submit', name: 'submit', value: 'Really?', class: 'btn btn-primary'}],
+    fields: [{type: 'hidden', name: 'id', value: ''},
+        {type: 'submit', name: 'submit', value: 'Really?', class: 'btn btn-primary'}],
     onSuccess: function (content) {
-        window.location.href = '/';
+        if(window.location.href.endsWith('/account')){
+            // User deleted his own account - redirect to home
+            window.location.href = '/';
+        } else {
+            // Admin deleted user account, reload users
+            window.location.reload()
+        }
         return 'Account Deleted';
     },
     onFailure: function (content) {

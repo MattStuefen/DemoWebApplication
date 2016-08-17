@@ -5,6 +5,7 @@ var LocalStrategy = require('passport-local');
 
 var emailer = require('../utilities/emailer');
 var usersDao = require('../utilities/usersDao');
+var errors = require('../utilities/errorDefinitions');
 
 passport.use('local', new LocalStrategy(usersDao.verifyUser));
 passport.deserializeUser(usersDao.getUserById);
@@ -29,23 +30,22 @@ router.post('/register', function (req, res) {
         if (err) return res.status(401).send(err);
         req.login(user, function (err) {
             if (err) return res.status(401).send(err);
-            return res.redirect('/');
+            res.send('');
         });
     });
 });
 
 router.post('/unregister', function (req, res) {
     if (!req.user) {
-        res.redirect('/');
-        return;
+        return res.status(401).send(errors.unauthorized);
     }
 
-    var id = req.user.id;
-    req.logout();
+    var id = (req.body.id) ? req.body.id : req.user.id;
+    if (!req.body.id) req.logout();
 
     usersDao.removeUser(id, function (err) {
         if (err) return res.status(401).send("An error has occurred: " + err);
-        res.redirect('/');
+        res.send('');
     });
 });
 
@@ -64,7 +64,7 @@ router.post('/forgotPassword', function (req, res) {
 router.post('/changePassword', function (req, res) {
     var token = req.param('token');
     usersDao.changePassword({'token': token, 'user': req.user, 'password': req.body.password}, function (err, user) {
-        if (err) return res.status(401).send(err);
+        if (err) return res.status(500).send(err);
         res.send(user)
     });
 });
@@ -73,19 +73,37 @@ router.get('/account', function (req, res, next) {
     var token = req.param('token');
 
     if(!token && !req.user){
-        var err = new Error('Unauthorized', 401);
-        err.status = 401;
-        return next(err);
+        return next(errors.unauthorized);
     }
 
     res.render('./user/account', {token: req.param('token')});
 });
 
 router.get('/users', function (req, res, next) {
-    // GET users listing.
+    if(!isAdmin(req.user)){
+        return next(errors.unauthorized);
+    }
+
     usersDao.getUserList(function (err, users) {
-        res.send(users);
+        res.render('./user/users', {usersList: users});
     });
 });
+
+router.post('/editAccount', function (req, res) {
+    if(!isAdmin(req.user)){
+        return next(errors.unauthorized);
+    }
+
+    var token = req.param('token');
+    usersDao.editUser(req.body, function (err) {
+        if (err) return res.status(500).send(err);
+        res.send('')
+    });
+});
+
+function isAdmin(user) {
+    // TODO: Add user roles.
+    return !!user;
+}
 
 module.exports = router;
