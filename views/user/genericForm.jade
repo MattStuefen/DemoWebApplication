@@ -1,6 +1,6 @@
 mixin genericForm(params)
     form.form(id=params.name + '-form')
-        output(id=params.name + '-output')
+        output.panel-group.panel.panel-body.form-output(id=params.name + '-output')
         each field in params.fields
             div.form-group.has-feedback(id=params.name + '-' + field.name, style="margin-bottom: 5px;")
                 input.form-control.input-sm&attributes(field)
@@ -22,6 +22,9 @@ mixin genericForm(params)
 
             form.submit(function (e) {
                 e.preventDefault();
+                var submitButton = $($(this)[0].elements).filter(':submit');
+                submitButton.attr('data-loading-text', "Processing...");
+                submitButton.button('loading');
 
                 $.ajax({
                     url: postUrl,
@@ -29,18 +32,26 @@ mixin genericForm(params)
                     data: form.serialize(),
                     success: function (content) {
                         output.css('color', 'green');
+                        output.css('border-color', '#d6e9c6');
                         output.text((onSuccess) ? onSuccess(content) : content.responseText);
+                        output.css('display', 'block');
+                        submitButton.button('reset');
                     },
                     error: function (content) {
                         output.css('color', 'red');
+                        output.css('border-color', '#ebccd1');
                         output.text((onFailure) ? onFailure(content) : content.responseText);
+                        output.css('display', 'block');
+                        submitButton.button('reset');
                     }
                 });
             }).change(function (e) {
-                output.text("");
+                output.css('display', 'none');
                 if (onChange) onChange(e)
             }).keyup(function (e) {
-                output.text("");
                 if (onKeyUp) onKeyUp(e)
+            }).keydown(function (e) {
+                output.css('display', 'none');
+                output.text("");
             })
         })()
