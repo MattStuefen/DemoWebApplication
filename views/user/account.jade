@@ -4,7 +4,7 @@ extends ../layout
 mixin passwordChangeBox()
     div.panel-group.container-fluid.col-md-3
         div.panel.panel-info
-            div.panel-heading: | Change password:
+            div.panel-heading: | Change password
             div.panel-body
                 div
                     +genericForm({
@@ -40,7 +40,7 @@ block content
             +passwordChangeBox()
         else if user
             div.panel-group.container-fluid: div.panel.panel-warning: div.panel-body: div.row
-                h4.text-center= 'Account Preferences:'
+                h4.text-center= 'Account Preferences'
             +passwordChangeBox()
             div.panel-group.container-fluid.col-md-3: div.panel.panel-danger
                 div.panel-heading: | Account Removal
