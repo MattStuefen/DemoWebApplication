@@ -76,7 +76,7 @@ router.get('/account', function (req, res, next) {
         return next(errors.unauthorized);
     }
 
-    res.render('./user/account', {token: req.param('token')});
+    res.render('./user/account', {title: 'Account', token: req.param('token')});
 });
 
 router.get('/users', function (req, res, next) {
@@ -85,7 +85,7 @@ router.get('/users', function (req, res, next) {
     }
 
     usersDao.getUserList(function (err, users) {
-        res.render('./user/users', {usersList: users});
+        res.render('./user/users', {title: 'Users', usersList: users});
     });
 });
 
