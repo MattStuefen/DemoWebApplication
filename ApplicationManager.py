@@ -36,7 +36,7 @@ def update_git_repo():
     elif update_git_repo.process.poll() is not None:
         print 'Update finished.'
         del update_git_repo.process
-        start_demo_web_app(restart=True)
+        start_demo_web_app()
         return
 
     # Keep calling this function every seconds until process is finished
@@ -44,17 +44,22 @@ def update_git_repo():
     timer.start()
 
 
-def start_demo_web_app(restart=False):
-    if restart:
-        print "Stopping web application."
-        start_demo_web_app.process.kill()
-        start_demo_web_app.process = None
-        timer = Timer(10, start_demo_web_app)
-        timer.start()
-    else:
+def start_demo_web_app():
+    if not hasattr(start_demo_web_app, 'process'):
         print "Launching web application."
         start_demo_web_app.process = \
             Popen(['node', './bin/www', 'googleApiKey=' + os.environ.get('GOOGLE_API_KEY')], shell=False)
+        return
+    elif start_demo_web_app.process.poll() is None:
+        print "Stopping web application."
+        start_demo_web_app.process.kill()
+    else:
+        print "Web application stopped."
+        del start_demo_web_app.process
+
+    # Keep calling this function every seconds until app has started
+    timer = Timer(1, start_demo_web_app)
+    timer.start()
 
 
 if __name__ == '__main__':
