@@ -1,0 +1,99 @@
+extends layout
+include ./user/genericForm
+
+block importedScripts
+    link(rel='stylesheet', href='/tpip/css/nv.d3.min.css')
+    link(rel='stylesheet', href='//cdn.datatables.net/1.10.12/css/jquery.dataTables.css')
+    script(src="https://d3js.org/d3.v3.min.js")
+    script(src="/tpip/js/nv.d3.min.js")
+    script(src="//cdn.datatables.net/1.10.12/js/jquery.dataTables.js")
+    script(src="/js/csvParser.js")
+    script(src="/js/chartBuilder.js")
+    script(src="/js/tableBuilder.js")
+
+block content
+    div.panel-group.container-fluid
+        div.panel.panel-warning
+            div.panel-body
+                div.row
+                    h4.text-center= 'Data'
+    div.panel-group.container-fluid
+        div.panel.panel-info
+            div.panel-heading: | File Select
+            div.panel-body
+                div.row
+                    div.col-md-4: button.btn.btn-primary#load-demo-button: | Load Demo
+                    div.col-md-4: h4.text-center: | - or -
+                    div.col-md-4.pull-right: form.form-inline.pull-right
+                        output.form-control.form-output#file-select-output(style="display: none;")
+                        label.btn.btn-primary.btn-file#file-select-button
+                            | Select CSV File
+                            input(type='file', name='data', style="display: none;")
+        div.panel.panel-info#chart-panel(style='display:none;')
+            div.panel-heading: | Chart
+            div.panel-body
+                div#chart: svg(style='height: 500px; overflow: visible;')
+        div.panel.panel-info#table-panel(style='display:none;')
+            div.panel-heading: | Tabular Data
+            div.panel-body
+                div.table-responsive: table.display.table.table-striped#data-table
+
+    script.
+        (function () {
+            const dataOutputString = $('#file-select-output');
+            const chartBuilder = new ChartBuilder('chart-panel', 'chart');
+            const tableBuilder = new TableBuilder('table-panel', 'data-table');
+
+            const loadDemoButton = $('#load-demo-button');
+            loadDemoButton.attr('data-loading-text', "Loading...");
+
+            loadDemoButton.click(function () {
+                loadDemoButton.button('loading');
+                $.get('demo.csv', function (data) {
+                    visualizeData(data);
+                    loadDemoButton.button('reset');
+                })
+            });
+
+            const fileSelectButton = $('#file-select-button');
+            fileSelectButton.attr('data-loading-text', "Loading...");
+            fileSelectButton.attr('data-original-title', "CSV must contain a header.  The first column may contain dates, but subsequent columns must be numeric.");
+            fileSelectButton.tooltip('enable');
+
+            fileSelectButton.change(function (e) {
+                fileSelectButton.button('loading');
+                var file = e.target.files[0];
+                const reader = (new FileReader());
+                reader.onerror = function (evt) {
+                    showOutput('File load failed: ' + evt.target.error.name, 'error');
+                }
+                reader.onprogress = function (evt) {
+                    if (evt.lengthComputable) {
+                        var percentLoaded = 100 * evt.loaded / evt.total;
+                        // TODO: progress bar?
+                    }
+                }
+                reader.onload = function (evt) {
+                    setTimeout(function () {
+                        visualizeData(evt.target.result);
+                        showOutput('Load Successful.', 'success');
+                        fileSelectButton.button('reset');
+                    }, 0)
+                }
+                setTimeout(function () {
+                    reader.readAsText(file);
+                }, 0);
+            });
+
+            function visualizeData(csv) {
+                var csvParser = new CSVParser(csv);
+                chartBuilder.drawChart(csvParser.getChartData());
+                tableBuilder.drawTable(csvParser.getTableData());
+            }
+
+            var showOutput = function (message, state) {
+                dataOutputString.removeClass('form-output-error form-output-warn form-output-success');
+                dataOutputString.addClass('form-output-' + state);
+                dataOutputString.text(message);
+            };
+        })()

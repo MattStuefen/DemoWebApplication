@@ -8,7 +8,7 @@ mixin genericForm(params)
 
     script.
         (function () {
-            // Functions may have not been set, which would cause the jade parameter will evaluate to an
+            // Functions may have not been set, which would cause the jade parameter to evaluate to an
             // empty string.  To allow for proper checking of these values I put them in arrays and indexed on 0 -
             // if the function isn't implemented the definition will look like this [][0] (which evaluates to
             // undefined)
