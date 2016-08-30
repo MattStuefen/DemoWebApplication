@@ -19,14 +19,18 @@ block content
                     h4.text-center= 'Data'
     div.panel-group.container-fluid
         div.panel.panel-info
-            div.panel-heading: | File Select
+            div.panel-heading
+                div(style="display: inline-block;"): | File Select
+                div.pull-right(style="display: inline-block; margin-top: -7px;")
+                    output.form-control.form-output#file-select-output(style="display: none;")
             div.panel-body
                 div.row
-                    div.col-md-4: button.btn.btn-primary#load-demo-button: | Load Demo
-                    div.col-md-4: h4.text-center: | - or -
-                    div.col-md-4.pull-right: form.form-inline.pull-right
-                        output.form-control.form-output#file-select-output(style="display: none;")
-                        label.btn.btn-primary.btn-file#file-select-button
+                    div.col-sm-3: button.btn.btn-primary.stretch#load-demo-button: | Load Demo
+                    div.col-sm-1
+                    div.col-sm-4: h4.text-center: | - or -
+                    div.col-sm-1
+                    div.col-sm-3: form.form-inline
+                        label.btn.btn-primary.btn-file.stretch#file-select-button
                             | Select CSV File
                             input(type='file', name='data', style="display: none;")
         div.panel.panel-info#chart-panel(style='display:none;')

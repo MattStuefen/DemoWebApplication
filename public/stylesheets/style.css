@@ -20,19 +20,19 @@
 .form-output-error {
     color: red;
     border-color: #ebccd1;
-    display: block !important;
+    display: inline-block !important;
 }
 
 .form-output-warn {
     color: orange;
     border-color: #faebcc;
-    display: block !important;
+    display: inline-block !important;
 }
 
 .form-output-success {
     color: green;
     border-color: #d6e9c6;
-    display: inline !important;
+    display: inline-block !important;
 }
 
 .btn-submit:disabled {
