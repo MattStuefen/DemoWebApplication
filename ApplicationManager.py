@@ -48,7 +48,7 @@ def start_demo_web_app():
     if not hasattr(start_demo_web_app, 'process'):
         print "Launching web application."
         start_demo_web_app.process = \
-            Popen(['node', './bin/www', 'googleApiKey=' + os.environ.get('GOOGLE_API_KEY')], shell=False)
+            Popen(['node', './bin/www', 'googleApiKey=' + os.environ.get('GOOGLE_API_KEY'), 'googleTrackingId=' + os.environ.get('GOOGLE_TRACKING_ID')], shell=False)
         return
     elif start_demo_web_app.process.poll() is None:
         print "Stopping web application."

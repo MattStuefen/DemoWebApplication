@@ -1,4 +1,5 @@
 var express = require('express');
+var args = require('../utilities/args');
 var router = express.Router();
 var passport = require('passport');
 var LocalStrategy = require('passport-local');
@@ -76,7 +77,7 @@ router.get('/account', function (req, res, next) {
         return next(errors.unauthorized);
     }
 
-    res.render('./user/account', {title: 'Account', token: req.param('token')});
+    res.render('./user/account', {title: 'Account', token: req.param('token'), googleTrackingId: args.googleTrackingId});
 });
 
 router.get('/users', function (req, res, next) {
@@ -85,7 +86,7 @@ router.get('/users', function (req, res, next) {
     }
 
     usersDao.getUserList(function (err, users) {
-        res.render('./user/users', {title: 'Users', usersList: users});
+        res.render('./user/users', {title: 'Users', usersList: users, googleTrackingId: args.googleTrackingId});
     });
 });
 
