@@ -11,7 +11,7 @@ nav.navbar.navbar-default
             ul.nav.navbar-nav.navbar-left
                 li.active
                     a(href="/data") Data
-                if user
+                if user && user.org_admin_id == null
                     li
                         a(href="/users") Users
             ul.nav.navbar-nav.navbar-right

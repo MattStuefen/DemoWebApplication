@@ -27,12 +27,17 @@ router.get('/logout', function (req, res) {
 });
 
 router.post('/register', function (req, res) {
-    usersDao.addUser(req.body.username, req.body.password, req.body.emailAddress, function (err, user) {
+    usersDao.addUser(req.body.username, req.body.password, req.body.emailAddress, req.user, function (err, user) {
         if (err) return res.status(401).send(err);
-        req.login(user, function (err) {
-            if (err) return res.status(401).send(err);
+        if(!req.user){
+            // Login if account wasn't created by admin
+            req.login(user, function (err) {
+                if (err) return res.status(401).send(err);
+                res.send('');
+            });
+        } else {
             res.send('');
-        });
+        }
     });
 });
 
@@ -81,17 +86,17 @@ router.get('/account', function (req, res, next) {
 });
 
 router.get('/users', function (req, res, next) {
-    if(!isAdmin(req.user)){
+    if(!usersDao.isAdmin(req.user)){
         return next(errors.unauthorized);
     }
 
-    usersDao.getUserList(function (err, users) {
+    usersDao.getUserList(req.user, function (err, users) {
         res.render('./user/users', {title: 'Users', usersList: users, googleTrackingId: args.googleTrackingId});
     });
 });
 
 router.post('/editAccount', function (req, res) {
-    if(!isAdmin(req.user)){
+    if(!usersDao.isAdmin(req.user)){
         return next(errors.unauthorized);
     }
 
@@ -101,10 +106,5 @@ router.post('/editAccount', function (req, res) {
         res.send('')
     });
 });
-
-function isAdmin(user) {
-    // TODO: Add user roles.
-    return !!user;
-}
 
 module.exports = router;

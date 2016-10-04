@@ -9,16 +9,20 @@ const TABLE_CREATION_SQL = "CREATE TABLE if not exists user_info (" +
     "username TEXT NOT NULL UNIQUE," +
     "password TEXT NOT NULL," +
     "email TEXT UNIQUE," +
+    "role INTEGER NOT NULL," +
+    "org_admin_id INTEGER," +
     "reset_token TEXT UNIQUE)";
+
+const USER_ROLES = {MASTER_ADMIN: 0, ADMIN: 1, USER: 2};
 
 module.exports.initializeTable = function () {
     dbConnection.initialize('users.db');
     dbConnection.run(TABLE_CREATION_SQL);
 };
 
-module.exports.addUser = function (username, password, emailAddress, callback) {
+module.exports.addUser = function (username, password, emailAddress, org_admin, callback) {
     encryptPassword(password, function (err, encryptedPassword) {
-        dbConnection.run("INSERT INTO user_info VALUES (NULL, ?, ?, ?, NULL)", [username, encryptedPassword, emailAddress],
+        dbConnection.run("INSERT INTO user_info VALUES (NULL, ?, ?, ?, ?, ?, NULL)", [username, encryptedPassword, emailAddress, (org_admin ? USER_ROLES.USER : USER_ROLES.ADMIN), (org_admin ? org_admin.id : null)],
             function (err) {
                 if (err) return callback(getFailureString(err));
                 getUserByField("username", username, callback);
@@ -27,7 +31,7 @@ module.exports.addUser = function (username, password, emailAddress, callback) {
 };
 
 module.exports.removeUser = function (id, callback) {
-    dbConnection.run("DELETE FROM user_info WHERE id=?", [id], callback);
+    dbConnection.run("DELETE FROM user_info WHERE id=? OR org_admin_id=?", [id, id], callback);
 };
 
 module.exports.verifyUser = function (username, password, callback) {
@@ -78,8 +82,16 @@ module.exports.getUserById = function (id, callback) {
     getUserByField("id", id, callback);
 };
 
-module.exports.getUserList = function (callback) {
-    dbConnection.all("SELECT * FROM user_info", null, callback);
+module.exports.getUserList = function (user, callback) {
+    if(user.role == 0){
+        dbConnection.all("SELECT * FROM user_info", null, callback);
+    } else {
+        dbConnection.all("SELECT * FROM user_info WHERE org_admin_id=?", [user.id], callback);
+    }
+};
+
+module.exports.isAdmin = function (user){
+    return user && (user.role == USER_ROLES.MASTER_ADMIN || user.role == USER_ROLES.ADMIN);
 };
 
 function getFailureString(err) {
